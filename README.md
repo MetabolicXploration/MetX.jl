@@ -1,1 +1,1 @@
-# MetX
+# MetX.jl
