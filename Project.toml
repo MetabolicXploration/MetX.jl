@@ -3,6 +3,10 @@ uuid = "01815447-a018-4668-9805-89f51b3fc6a1"
 authors = ["josePereiro <jose.pereiro.personal@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+MetXBase = "0b8c4419-604a-4c8e-9eed-0f79de4a140e"
+MetXNetHub = "be9415a8-24b2-49ae-ba75-41eeaa9f722f"
+
 [compat]
 julia = "1.6"
 
