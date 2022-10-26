@@ -152,7 +152,12 @@ let
             println()
         end
 
+        # instantiate
+        println()
+        Pkg.instantiate()
+        println()
     end
+
 end
 
 ## ------------------------------------------------------------------
