@@ -1,9 +1,19 @@
 import Pkg
-import Base.TOML: Parser, parse
 
 ## ------------------------------------------------------------------
 const MET_X_PKGS = ["MetX", "MetXBase", "MetXNetHub", "MetXOptim"]
 const BASE_URL = "https://github.com/MetabolicXploration"
+
+## ------------------------------------------------------------------
+# add registry
+let
+    println("\n\n")
+    println("="^60)
+    println("DOWNLOADING")
+    
+    url = joinpath(BASE_URL, "MetX_Registry_jl")
+    Pkg.Registry.add(Pkg.RegistrySpec(;url))
+end
 
 ## ------------------------------------------------------------------
 # try download to Pkg.pkgdir
@@ -111,7 +121,7 @@ end
 ## ------------------------------------------------------------------
 # Dev cross-dependencies
 function _get_deps(projtoml) 
-    tomldict = parse(Parser(read(projtoml, String)))
+    tomldict = Pkg.TOML.parsefile(projtoml)
     return get(tomldict, "deps", Dict()) |> keys |> collect
 end
 
