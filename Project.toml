@@ -4,13 +4,12 @@ authors = ["The members of MetabolicXploration"]
 version = "0.1.4"
 
 [deps]
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-MetXMC = "d4a97fa3-1e77-4085-814f-98651929ce7d"
-MetXOptim = "672bf490-d3aa-44fe-a664-43445036b9de"
+MetXBase = "0b8c4419-604a-4c8e-9eed-0f79de4a140e"
 MetXEP = "3facea42-c6d8-46ab-8896-2657a92d9f87"
 MetXNetHub = "be9415a8-24b2-49ae-ba75-41eeaa9f722f"
+MetXOptim = "672bf490-d3aa-44fe-a664-43445036b9de"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
-MetXBase = "0b8c4419-604a-4c8e-9eed-0f79de4a140e"
 
 [compat]
 julia = "1.6"
