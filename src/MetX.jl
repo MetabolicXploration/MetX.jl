@@ -6,6 +6,6 @@ module MetX
     @reexport using MetXNetHub
     @reexport using MetXOptim
     @reexport using MetXEP
-    @reexport using MetXMC
+    # @reexport using MetXMC
 
 end
