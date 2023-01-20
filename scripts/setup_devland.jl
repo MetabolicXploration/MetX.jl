@@ -1,7 +1,14 @@
 import Pkg
 
 ## ------------------------------------------------------------------
-const MET_X_PKGS = ["MetX", "MetXBase", "MetXNetHub", "MetXOptim"]
+const MET_X_PKGS = [
+    "MetX", 
+    "MetXBase", 
+    "MetXOptim", 
+    "MetXGrids", "MetXMC", "MetXEP", 
+    "MetXPlots", 
+    "MetXNetHub"
+]
 const BASE_URL = "https://github.com/MetabolicXploration"
 
 ## ------------------------------------------------------------------
@@ -175,3 +182,5 @@ println("\n\n")
 println("="^60)
 println("DONE!!! ENJOY")
 println("\n\n")
+
+
