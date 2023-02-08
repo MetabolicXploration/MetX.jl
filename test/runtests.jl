@@ -4,7 +4,7 @@ import Pkg
 
 @testset "MetX.jl" begin
     
-    # TODO: This is probably not a good idea
+    # TODO: Do this using the Test interface.
     totest =  [
         "MetXBase", "MetXNetHub", "MetXOptim", "MetXEP", 
         "MetXMC", "MetXGrids"
