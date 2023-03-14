@@ -16,7 +16,7 @@ let
     global net = box(net0, Gurobi.Optimizer, verbose = true)
 
     # EP
-    global enet = EchelonMetNet(net)
+    global enet = EchelonLEPModel(net)
     @show size(net.S)
     @assert maximum(enet.idxd) > size(net.S, 2) # This should fail
     @assert maximum(enet.idxf) > size(net.S, 2)

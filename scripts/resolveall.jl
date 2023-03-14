@@ -7,6 +7,7 @@ let
                 "MetX", 
                 "MetXBase", 
                 "MetXOptim", 
+                "MetXGEMs", 
                 "MetXGrids", "MetXMC", "MetXEP", 
                 "MetXPlots", 
                 "MetXNetHub", "MetXCultureHub", 

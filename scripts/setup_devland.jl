@@ -4,6 +4,7 @@ import Pkg
 const MET_X_PKGS = [
     "MetX", 
     "MetXBase", 
+    "MetXGEMs", 
     "MetXOptim", 
     "MetXGrids", "MetXMC", "MetXEP", 
     "MetXPlots", 
