@@ -1,16 +1,7 @@
 import Pkg
 
 ## ------------------------------------------------------------------
-const MET_X_PKGS = [
-    "MetX", 
-    "MetXBase", 
-    "MetXGEMs", 
-    "MetXOptim", 
-    "MetXGrids", "MetXMC", "MetXEP", 
-    "MetXPlots", 
-    "MetXNetHub"
-]
-const BASE_URL = "https://github.com/MetabolicXploration"
+include("metx_base.jl")
 
 ## ------------------------------------------------------------------
 # add registry
@@ -30,7 +21,7 @@ let
     println("="^60)
     println("DOWNLOADING")
     
-    for pkgname in MET_X_PKGS
+    for pkgname in MET_X_PKG_NAMES
         
         pkgdir = joinpath(Pkg.devdir(), pkgname)
         url = joinpath(BASE_URL, string(pkgname, ".jl"))
@@ -59,7 +50,7 @@ let
     println("="^60)
     println("PULLING")
 
-    for pkgname in MET_X_PKGS
+    for pkgname in MET_X_PKG_NAMES
         
         pkgdir = joinpath(Pkg.devdir(), pkgname)
         url = joinpath(BASE_URL, string(pkgname, ".jl"))
@@ -112,7 +103,7 @@ let
     println("DEV IN HOME")
 
     Pkg.activate()
-    for pkgname in MET_X_PKGS
+    for pkgname in MET_X_PKG_NAMES
 
         println()
         println("."^60)
@@ -139,7 +130,7 @@ let
     println("DEV CROSS DEPENDENCIES")
 
     Pkg.activate()
-    for pkgname in MET_X_PKGS
+    for pkgname in MET_X_PKG_NAMES
 
         pkgdir = joinpath(Pkg.devdir(), pkgname)
         projtoml = joinpath(pkgdir, "Project.toml")
@@ -162,7 +153,7 @@ let
 
         deps = _get_deps(projtoml)
 
-        for pkgname1 in MET_X_PKGS
+        for pkgname1 in MET_X_PKG_NAMES
             (pkgname1 == pkgname) && continue
             (pkgname1 in deps) || continue
 
