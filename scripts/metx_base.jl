@@ -5,9 +5,11 @@ MET_X_PKG_NAMES = [
     "MetXGEMs", 
     "MetXOptim", 
     "MetXGrids", "MetXMC", "MetXEP", 
-    "MetXPlots", "RunTestsEnv",
-    "MetXNetHub", "MetXCultureHub", 
+    "MetXPlots", 
+    "MetXNetHub", "MetXCultureHub",
     "MetX", 
+    "RunTestsEnv",
+    "ProjFlows"
 ]
 METX_ORG_URL = "https://github.com/MetabolicXploration"
 
