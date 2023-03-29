@@ -1,15 +1,15 @@
-# --------------------------------------------------------------------
+. # --------------------------------------------------------------------
 # globals
 MET_X_PKG_NAMES = [
-    "MetX", 
     "MetXBase", 
     "MetXGEMs", 
     "MetXOptim", 
     "MetXGrids", "MetXMC", "MetXEP", 
     "MetXPlots", "RunTestsEnv",
     "MetXNetHub", "MetXCultureHub", 
+    "MetX", 
 ]
-BASE_URL = "https://github.com/MetabolicXploration"
+METX_ORG_URL = "https://github.com/MetabolicXploration"
 
 # --------------------------------------------------------------------
 # Utils

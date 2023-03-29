@@ -4,13 +4,15 @@ import Pkg
 include("metx_base.jl")
 
 ## ------------------------------------------------------------------
-# add registry
+# add registries
 let
     println("\n\n")
     println("="^60)
-    println("DOWNLOADING")
+    println("ADDING REGISTRIES")
     
-    url = joinpath(BASE_URL, "MetX_Registry_jl")
+    url = string(METX_ORG_URL, "/", "MetX_Registry_jl")
+    Pkg.Registry.add(Pkg.RegistrySpec(;url))
+    url = "https://github.com/FF-UH/CSC_Registry.jl"
     Pkg.Registry.add(Pkg.RegistrySpec(;url))
 end
 
@@ -24,7 +26,7 @@ let
     for pkgname in MET_X_PKG_NAMES
         
         pkgdir = joinpath(Pkg.devdir(), pkgname)
-        url = joinpath(BASE_URL, string(pkgname, ".jl"))
+        url = string(METX_ORG_URL, "/", pkgname, ".jl")
         
         println()
         println("."^60)
@@ -53,7 +55,7 @@ let
     for pkgname in MET_X_PKG_NAMES
         
         pkgdir = joinpath(Pkg.devdir(), pkgname)
-        url = joinpath(BASE_URL, string(pkgname, ".jl"))
+        url = joinpath(METX_ORG_URL, string(pkgname, ".jl"))
         
         println()
         println("."^60)
