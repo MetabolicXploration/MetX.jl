@@ -19,7 +19,7 @@ let
     global enet = EchelonLEPModel(net)
     @show size(net.S)
     @assert maximum(enet.idxd) > size(net.S, 2) # This should fail
-    @assert maximum(enet.idxf) > size(net.S, 2)
+    @assert maximum(enet.idxi) > size(net.S, 2)
 end
 
 
