@@ -4,6 +4,7 @@
 *.ipynb
 /docs
 /DEPRECATED
+.clusters
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,visualstudiocode,macos,emacs,julia,git
