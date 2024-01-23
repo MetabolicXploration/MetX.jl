@@ -12,42 +12,7 @@
 end
 
 ## - - - - - - - - - - - - - - - - - - - - - -
-# TODO: make it work
-let
-    net = pull_net("ecoli_core")
-    net.S .= 0.0;
-    net.b .= 0.0;
-    net.lb .= 0.0;
-    net.ub .= 1.0;
-    epm0 = FluxEPModelT0(net)
-    converge!(epm0)
-    S = entropy(epm0)
-    F = free_energy(epm0)[1]
-    @show log(-F) / size(net, 2)
-    @show log(S)
-end
-
-## - - - - - - - - - - - - - - - - - - - - - -
-function _num_av(ys, dx; w = 5)
-    dydx = zeros(length(ys))
-    for i in eachindex(ys)
-        i0 = max(firstindex(ys), i - w)
-        i1 = min(lastindex(ys), i + w)
-        dydx[i] = mean(diff(ys[i0:i1])) ./ dx
-    end
-    return dydx
-end
-
-## - - - - - - - - - - - - - - - - - - - - - -
-function _fixxed_net(net, ider, b)
-    net = deepcopy(net)
-    ider = rxnindex(net, ider)
-    lb!(net, ider, b)
-    ub!(net, ider, b)
-    empty_fixxed!(net)
-    empty_void_iders!(net)
-    return emptyless_model(net)
-end
+include("utils.jl")
 
 ## - - - - - - - - - - - - - - - - - - - - - -
 let 
@@ -66,7 +31,7 @@ let
     global ubs = 1.0:0.1:10.0
 
     global F0s = Float64[]
-    global S0s = Float64[]
+    global S0s = Float64[] 
     global av0s = []
     for u in ubs
         lb!(net1, lim_id, 0)
@@ -104,11 +69,11 @@ end
 ## - - - - - - - - - - - - - - - - - - - - - -
 let
     f = Figure()
-    ax = Axis(f[1,1]; xlabel = "LB", title = "Z")
-    # scatter!(ax, ubs, F0s; label = "F0")
-    # scatter!(ax, ubs, F1s; label = "F1")
-    scatter!(ax, ubs, S0s; label = "S0", color = :red)
-    scatter!(ax, ubs, S1s; label = "S1", color = :blue)
+    ax = Axis(f[1,1]; xlabel = "UB", title = "Z")
+    scatter!(ax, ubs, F0s; label = "F0")
+    scatter!(ax, ubs, F1s; label = "F1")
+    # scatter!(ax, ubs, S0s; label = "S0", color = :red)
+    # scatter!(ax, ubs, S1s; label = "S1", color = :blue)
     axislegend(ax; position = :lt)
     f
 end
@@ -117,11 +82,11 @@ end
 ## - - - - - - - - - - - - - - - - - - - - - -
 # dZ/dU
 let
-    Z0s = exp.(-big.(F0s))
-    Z1s = exp.(-big.(F1s))
+    global Z0s = exp.(-big.(F0s))
+    global Z1s = exp.(-big.(F1s))
     # dZ0s = diff(Z0s) ./ step(ubs)
     # push!(dZ0s, last(dZ0s))
-    dZ0s = _num_av(Z0s, step(ubs); w = 2)
+    dZ0s = _num_av(Z0s, step(ubs); w = 1)
     
     f = Figure()
 
@@ -129,9 +94,9 @@ let
         xlabel = L"\log~~\frac{\partial Z}{\partial U_i}", 
         ylabel = L"\log~~Z", 
     )
-    lines!(ax, log.(dZ0s), log.(dZ0s); label = L"y=x", color = :black)
-    scatter!(ax, log.(dZ0s), -F0s; label = L"Z", color = :red)
-    scatter!(ax, log.(dZ0s), -F1s; label = L"Z(S_{-i}, b(U_{i}), c_{-i})", color = :blue)
+    lines!(ax, log.(abs.(dZ0s)), log.(abs.(dZ0s)); label = L"y=x", color = :black)
+    scatter!(ax, log.(abs.(dZ0s)), -F0s; label = L"Z", color = :red)
+    scatter!(ax, log.(abs.(dZ0s)), -F1s; label = L"Z(S_{-i}, b(U_{i}), c_{-i})", color = :blue)
     axislegend(ax; position = :lt)
 
     ax = Axis(f[1,2]; 
@@ -155,26 +120,27 @@ end
 
 ## - - - - - - - - - - - - - - - - - - - - - -
 let
-    Z0s = exp.(-big.(F0s))
-    Z1s = exp.(-big.(F1s))
     
     # biomass
-    # ider = "BIOMASS_Ecoli_core_w_GAM"
-    ider = colids(net1, rand(1:132))
+    ider = "BIOMASS_Ecoli_core_w_GAM"
+    # ider = colids(net1, rand(1:132))
     _av0s = getindex.(av0s, ider)
     _av1s = getindex.(av1s, ider)
 
-    f = Figure()
+    f = Figure(;)
 
     ax = Axis(f[1,2]; 
         title = ider,
         xlabel = L"UB", 
         ylabel = L"\bar{v}", 
     )
-    scatter!(ax, ubs, _av0s; label = L"Z", color = :red)
+    scatter!(ax, ubs, _av0s; label = L"Z0", color = :red)
+    scatter!(ax, ubs, _av1s; label = L"Z1", color = :blue)
     axislegend(ax; position = :lt)
     
     dav_num = _num_av(_av0s, step(ubs); w = 1)
+    # Z0s = exp.(big.(S0s))
+    # Z1s = exp.(big.(S1s))
     # dav_anal = (Z1s ./ Z0s) .* (_av1s .- _av0s)
     dav_anal = exp.(F0s .- F1s) .* (_av1s .- _av0s)
     # dav_anal = (_av1s .- _av0s)
@@ -185,7 +151,7 @@ let
         xlabel = "numeric", 
         ylabel = "analytic", 
     )
-    scatter!(ax, dav_num, dav_anal, color = :red)
+    scatter!(ax, log.(dav_num), log.(dav_anal), color = :red)
 
     ax = Axis(f[1,3]; 
         xlabel = "UB", 
@@ -193,6 +159,7 @@ let
     )
     # scatter!(ax, ubs, dav_anal, color = :red)
     scatter!(ax, ubs, dav_num, color = :red)
+
     
     return f
 end
