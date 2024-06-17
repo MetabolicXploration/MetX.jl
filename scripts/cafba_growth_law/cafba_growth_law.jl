@@ -1,25 +1,26 @@
 ## - - - - - - - - - - - - - - - - - - - - - -
 @time begin 
-    using GLPK
+    using Makie
+    using CairoMakie
+    using Gurobi
     using MetXEP
     using MetXGEMs
     using MetXBase
     using MetXOptim
     using MetXNetHub
-    using CairoMakie
     using Statistics
     using Distributions: mvnormal_c0
-    using GLPK
 end
 
 ## - - - - - - - - - - - - - - - - - - - - - -
 include("utils.jl")
 
 ## - - - - - - - - - - - - - - - - - - - - - -
+# CAFBA GROWTH
+# TODO: FIX THIS
 let
-
-    global _wc_glc_s = collect(range(0.0, 1.5; length = 50))
-    global _wc_gln_s = collect(range(0.0, 1.2; length = 50))
+    global _wc_glc_s = collect(range(0.0, 3.2; length = 10))
+    global _wc_gln_s = collect(range(0.0, 0.9; length = 2))
     
     global wcs = []
     global wc_glc_s = Float64[]
@@ -43,7 +44,8 @@ let
         rxn == "EX_COST" && continue
         contains(rxn, "_EX_") && continue
         # @show rxn
-        _cafba_w!(net2, rxn, 8.3e-4)
+        # _cafba_w!(net2, rxn, 8.3e-4)
+        _cafba_w!(net2, rxn, 8.0e-4)
     end
     # Biomass
     _cafba_w!(net2, "FWD_BIOMASS_Ecoli_core_w_GAM", 0.169)
@@ -56,15 +58,26 @@ let
         # glc
         _cafba_w!(net2, "BWD_EX_glc__D_e", wc1)
         _cafba_w!(net2, "BWD_EX_gln__L_e", 0)
-        lpm = FBAOpModel(net2, GLPK.Optimizer)
+        lpm = FBAOpModel(net2, OPTIMIZER)
         optimize!(lpm)
         glc_z = solution(lpm, "FWD_BIOMASS_Ecoli_core_w_GAM")
         @show glc_z
 
+        # filter
+        global z_filter = (z) -> z < 0 ? 1e-3 : z
+
+        push!(wcs, (wc1, wc2))
+        push!(wc_glc_s, wc1)
+        push!(wc_gln_s, wc2)
+        glc_zs[(wc1, wc2)] = z_filter(glc_z)
+        # gln_zs[(wc1, wc2)] = z_filter(gln_z)
+        # glcgln_zs[(wc1, wc2)] = z_filter(glcgln_z)
+        continue
+
         # gln
         _cafba_w!(net2, "BWD_EX_glc__D_e", 0)
         _cafba_w!(net2, "BWD_EX_gln__L_e", wc2)
-        lpm = FBAOpModel(net2, GLPK.Optimizer)
+        lpm = FBAOpModel(net2, OPTIMIZER)
         optimize!(lpm)
         gln_z = solution(lpm, "FWD_BIOMASS_Ecoli_core_w_GAM")
         @show gln_z
@@ -72,75 +85,121 @@ let
         # glc gln
         _cafba_w!(net2, "BWD_EX_glc__D_e", wc1)
         _cafba_w!(net2, "BWD_EX_gln__L_e", wc2)
-        lpm = FBAOpModel(net2, GLPK.Optimizer)
+        lpm = FBAOpModel(net2, OPTIMIZER)
         optimize!(lpm)
         glcgln_z = solution(lpm, "FWD_BIOMASS_Ecoli_core_w_GAM")
         @show glcgln_z
 
+        # filter
+        global z_filter = (z) -> z < 0 ? 1e-3 : z
+
         push!(wcs, (wc1, wc2))
         push!(wc_glc_s, wc1)
         push!(wc_gln_s, wc2)
-        glc_zs[(wc1, wc2)] = glc_z
-        gln_zs[(wc1, wc2)] = gln_z
-        glcgln_zs[(wc1, wc2)] = glcgln_z
+        glc_zs[(wc1, wc2)] = z_filter(glc_z)
+        gln_zs[(wc1, wc2)] = z_filter(gln_z)
+        glcgln_zs[(wc1, wc2)] = z_filter(glcgln_z)
     end
     
 end
 
 ## - - - - - - - - - - - - - - - - - - - - - -
-# wc vs wc
+# PREDICTED GROWTH
 let
-    # 
+    z_c = 0.9
+    # z_c = 2.2
+    global pred_glcgln_zs = Dict()
+    for wp in wcs
+        glc_z = glc_zs[wp]
+        gln_z = gln_zs[wp]
+        pred_glcgln_z = compute_pred_glcgln_z(glc_z, gln_z; z_c)
+        pred_glcgln_zs[wp] = z_filter(pred_glcgln_z)
+    end
+end
+
+## - - - - - - - - - - - - - - - - - - - - - -
+# PLOTS
+## - - - - - - - - - - - - - - - - - - - - - -
+# Correlation
+let
+    
+    f = Figure()
+    g = GridLayout(f[1, 1])
+    ax = Axis(g[1:3,1:4]; 
+        title = "ecoli_core", 
+        limits = (nothing, nothing, nothing, nothing), 
+        xlabel = "ws index", 
+        ylabel = "λ"
+    )
+
+    
+    xs = Float64[pred_glcgln_zs[wc] for wc in wcs]
+    ridx = sortperm(xs)
+    # lines!(ax, xs[ridx]; label = "λ12 heuristic")
+    
+    xs = Float64[glcgln_zs[wc] for wc in wcs]
+    # lines!(ax, xs[ridx]; label = "λ12 cafba")
+    
+    xs = Float64[glc_zs[wc] for wc in wcs]
+    lines!(ax, xs[ridx]; label = "λglc cafba")
+
+    xs = Float64[gln_zs[wc] for wc in wcs]
+    lines!(ax, xs[ridx]; label = "λgln cafba")
+    
+    axislegend(ax; position = :lb)
+    f
+end
+
+## - - - - - - - - - - - - - - - - - - - - - -
+# model growth heat map
+# wc vs wc, 
+let
     xs = wc_glc_s
     ys = wc_gln_s
     zs = map(wcs) do wp
         z = glcgln_zs[wp]
         return z < 0 ? 1e-3 : z
     end
-    sidxs = sortperm(zs; rev = true)
 
-    # Plot
-    title = "ecoli_core"
-    xlabel = "wc_glc"
-    ylabel = "wc_gln"
-    dim1_T = (x1) -> identity.(x1)
-    dim2_T = (x2) -> identity.(x2)
-    cs_T = (cs) -> log10.(cs)
-    limits = (nothing, nothing, nothing, nothing)
-    dim1_bar_width = 1.0
-    dim2_bar_width = 1.0
-    colgap = -20
-    rowgap = -5
-
-    f = Figure()
-    g = GridLayout(f[1, 1])
-    ax = Axis(g[1:3,1:4]; 
-        title, limits, xlabel, ylabel
+    _plot_heat_map(;
+        xs, ys, zs, 
+        title = "ecoli_core",
+        xlabel = "wc_glc",
+        ylabel = "wc_gln",
+        limits = (nothing, nothing, nothing, nothing),
+        dim1_T = (x1) -> identity.(x1),
+        dim2_T = (x2) -> identity.(x2),
+        cs_T = (cs) -> log10.(cs),
+        label = "log λ12",
     )
-    x1 = dim1_T(collect(xs)) # koma len
-    x2 = dim2_T(collect(ys)) # rxn idx
-    w = collect(zs)
-    sidx = sortperm(w; rev = true)
-    # cs = log10.(w[sidx] ./ maximum(w[sidx]))
-    cs = cs_T(w[sidx] ./ maximum(w[sidx]))
-    scatter!(ax, x1[sidx], x2[sidx]; 
-        colormap = :viridis, 
-        markersize = 20, 
-        # marker = :square,
-        marker = '◼',
-        color = cs, 
-        alpha = 1.0,
-    )
-    Colorbar(g[1:3, 5]; 
-        # label = "log10 λ12",
-        label = "log10 λ12",
-        colormap = :viridis, limits = extrema(cs), 
-    )
-    f
 end
 
 
 
+## - - - - - - - - - - - - - - - - - - - - - -
+let
+    xs = wc_glc_s
+    ys = wc_gln_s
+    zs = map(wcs) do wp
+        z = glcgln_zs[wp]
+        return z < 0 ? 1e-3 : z
+    end
+
+    _plot_heat_map(;
+        xs, ys, zs, 
+        title = "ecoli_core",
+        xlabel = "wc_glc",
+        ylabel = "wc_gln",
+        limits = (nothing, nothing, nothing, nothing),
+        dim1_T = (x1) -> identity.(x1),
+        dim2_T = (x2) -> identity.(x2),
+        cs_T = (cs) -> log10.(cs),
+        label = "log λ12",
+    ) 
+end
+## - - - - - - - - - - - - - - - - - - - - - -
+## - - - - - - - - - - - - - - - - - - - - - -
+## - - - - - - - - - - - - - - - - - - - - - -
 ## - - - - - - - - - - - - - - - - - - - - - -
 ## - - - - - - - - - - - - - - - - - - - - - -
 ## - - - - - - - - - - - - - - - - - - - - - -
@@ -151,7 +210,7 @@ let
 
     z_c = 1.16
     # z_c = 2.2
-    pred_glcgln_zs = gln_zs .+ glc_zs .- (2 .* (glc_zs .* gln_zs) / z_c)
+    pred_glcgln_zs = gln_zs .+ glc_zs .- (2 .* (glc_zs .* gln_zs) ./ z_c)
     pred_glcgln_zs = pred_glcgln_zs ./ (1 .- ((glc_zs .* gln_zs) ./ z_c^2))
 
     idx_ = 1:10

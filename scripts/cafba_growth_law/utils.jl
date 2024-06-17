@@ -1,4 +1,10 @@
 ## - - - - - - - - - - - - - - - - - - - - - -
+# GUROBI
+using Gurobi
+GRB_ENV = Gurobi.Env()
+OPTIMIZER = () -> Gurobi.Optimizer(GRB_ENV)
+
+## - - - - - - - - - - - - - - - - - - - - - -
 # Adding cost to net
 function _cafba_model(net0;
     ϕmax = 0.5, 
@@ -56,7 +62,56 @@ return net2
 end
 
 ## - - - - - - - - - - - - - - - - - - - - - -
+## - - - - - - - - - - - - - - - - - - - - - -
 function _cafba_w!(net0, ider, w)
-cost_meti = rowindex(net0, "COST")
-stoi!(net0, cost_meti, ider, w)
+    cost_meti = rowindex(net0, "COST")
+    stoi!(net0, cost_meti, ider, w)
+end
+
+## - - - - - - - - - - - - - - - - - - - - - -
+function compute_pred_glcgln_z(glc_z, gln_z; z_c = 1.16)
+    pred_glcgln_z = gln_z + glc_z - (2 * (glc_z * gln_z) / z_c)
+    pred_glcgln_z = pred_glcgln_z / (1 - ((glc_z * gln_z) / z_c^2))
+    return pred_glcgln_z
+end
+
+## - - - - - - - - - - - - - - - - - - - - - -
+function _plot_heat_map(;
+        xs, ys, zs, 
+        title = "",
+        xlabel = "",
+        ylabel = "",
+        limits = (nothing, nothing, nothing, nothing),
+        dim1_T = (x1) -> identity.(x1),
+        dim2_T = (x2) -> identity.(x2),
+        cs_T = (cs) -> log10.(cs),
+        label = "",
+    )
+
+    # Plot
+    f = Figure()
+    g = GridLayout(f[1, 1])
+    ax = Axis(g[1:3,1:4]; 
+        title, limits, xlabel, ylabel
+    )
+    x1 = dim1_T(collect(xs)) # koma len
+    x2 = dim2_T(collect(ys)) # rxn idx
+    w = collect(zs)
+    sidx = sortperm(w; rev = true)
+    # cs = log10.(w[sidx] ./ maximum(w[sidx]))
+    cs = cs_T(w[sidx] ./ maximum(w[sidx]))
+    scatter!(ax, x1[sidx], x2[sidx]; 
+        colormap = :viridis, 
+        markersize = 20, 
+        # marker = :square,
+        marker = '◼',
+        color = cs, 
+        alpha = 1.0,
+    )
+    Colorbar(g[1:3, 5]; 
+        label,
+        colormap = :viridis, 
+        limits = extrema(cs), 
+    )
+    f
 end
