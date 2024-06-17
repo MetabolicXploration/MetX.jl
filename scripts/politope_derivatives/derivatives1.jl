@@ -24,7 +24,7 @@ let
     N = 100
     z1s = zeros(N)
     z2s = zeros(N)
-    @threads for it in 1:N
+    @threads :static for it in 1:N
         net1 = sample_random_net()
         net2 = _fixxed_net(net1, "BWD_EX_glc__D_e", 10.0)
         z1 = _objective_value(net1)
@@ -61,7 +61,7 @@ let
 
     global Urange = range(10.0, 9.0; length = 5)
 
-    @threads for it in 1:N
+    @threads :static for it in 1:N
         try
             @show it
             # nets
