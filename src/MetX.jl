@@ -3,13 +3,16 @@ module MetX
 
     using Reexport
 
+    #! include .
+    include("devmode.jl")
+
     @reexport using MetXBase
     @reexport using MetXGEMs
     @reexport using MetXOptim
     @reexport using MetXEP
-    # @reexport using MetXMC
+    @reexport using MetXMC
     # @reexport using MetXGrids
     @reexport using MetXNetHub
-    # @reexport using MetXCultureHub
+    @reexport using MetXCultureHub
 
 end
