@@ -1,3 +1,5 @@
+import Pkg
+
 const METX_PKGS = [
     "MetXBase", "MetXGEMs", "MetXOptim",
     "MetXEP", "MetXMC", "MetXNetHub", 
