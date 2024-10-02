@@ -4,18 +4,16 @@ authors = ["The members of MetabolicXploration"]
 version = "0.1.5"
 
 [deps]
-CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Gurobi = "2e9cd046-0924-5485-92f1-d5272153d98b"
-Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 MetXBase = "0b8c4419-604a-4c8e-9eed-0f79de4a140e"
 MetXCultureHub = "c8a5ff98-18da-494d-98cc-f2d3bae7da4c"
-MetXEP = "3facea42-c6d8-46ab-8896-2657a92d9f87"
-MetXGEMs = "f53f3d78-cab5-4f57-a3bb-d62de48011ec"
-MetXMC = "d4a97fa3-1e77-4085-814f-98651929ce7d"
 MetXNetHub = "be9415a8-24b2-49ae-ba75-41eeaa9f722f"
+MetXGEMs = "f53f3d78-cab5-4f57-a3bb-d62de48011ec"
+MetXEP = "3facea42-c6d8-46ab-8896-2657a92d9f87"
 MetXOptim = "672bf490-d3aa-44fe-a664-43445036b9de"
+MetXMC = "d4a97fa3-1e77-4085-814f-98651929ce7d"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
