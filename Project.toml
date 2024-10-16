@@ -1,7 +1,7 @@
 name = "MetX"
 uuid = "01815447-a018-4668-9805-89f51b3fc6a1"
 authors = ["The members of MetabolicXploration"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
