@@ -57,7 +57,7 @@ function EP_Urange(f::Function, net::MetNet, ider, Urange)
     u_bk = ub(net, ider)
     for u in Urange
         ub!(net, ider, u)
-        _net = box(net, OPTIMIZER)
+        _net = fva_strip(net, OPTIMIZER)
         epm = FluxEPModelT0(_net)
         converge!(epm)
         f(epm) === true && break

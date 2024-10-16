@@ -9,7 +9,7 @@ function EP_Urange(f::Function, net::MetNet, ider, Urange)
     u_bk = ub(net, ider)
     for u in Urange
         ub!(net, ider, u)
-        _net = box(net, OPTIMIZER)
+        _net = fva_strip(net, OPTIMIZER)
         epm = FluxEPModelT0(_net)
         extras!(epm, :EP_Urange, (;u))
         converge!(epm)
@@ -32,7 +32,7 @@ function EP_Urange(
         for u2 in Urange2
             ub!(net, ider1, u1)
             ub!(net, ider2, u2)
-            _net = box(net, OPTIMIZER; box_kwargs...)
+            _net = fva_strip(net, OPTIMIZER; box_kwargs...)
             epm = FluxEPModelT0(_net)
             extras!(epm, :EP_Urange, (;u1, u2))
             converge!(epm)

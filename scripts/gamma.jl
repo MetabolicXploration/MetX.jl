@@ -19,7 +19,7 @@ let
     ## ---------------------------------------------
     model_id = "ecoli_core"
     net0 = pull_net(model_id)
-    global lep = box(net0, LIN_SOLVER; verbose = false)
+    global lep = fva_strip(net0, LIN_SOLVER; verbose = false)
     global biom_id = extras(lep, "BIOM") 
 
     ## ---------------------------------------------

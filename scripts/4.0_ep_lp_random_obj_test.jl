@@ -36,7 +36,7 @@ let
     global net0 = pull_net("ecoli_core") 
     bounds!(net0, "SUCDi", 0.0, 0.0) # fix degeneracy
     global lep0 = lepmodel(net0)
-    global lep1 = box(lep0, Clp.Optimizer)
+    global lep1 = fva_strip(lep0, Clp.Optimizer)
 
 
     # objective setup

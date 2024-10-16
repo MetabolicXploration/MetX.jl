@@ -93,14 +93,14 @@ let
             @show dZdU
 
             # partition functions and means
-            _net0 = box(net0, OPTIMIZER)
+            _net0 = fva_strip(net0, OPTIMIZER)
             epm0 = FluxEPModelT0(_net0)
             converge!(epm0)
             Z0 = exp(-big(free_energy(epm0)[1]))
             _av0s = Dict(rxn => mean(epm0, rxn) for rxn in colids(_net0))
             @show Z0
             
-            _net1 = box(net1, OPTIMIZER)
+            _net1 = fva_strip(net1, OPTIMIZER)
             epm1 = FluxEPModelT0(_net1)
             converge!(epm1)
             Z1 = exp(-big(free_energy(epm1)[1]))

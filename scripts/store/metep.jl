@@ -39,7 +39,7 @@ let
     global netX = MetXNetHub.pull_net(model_id)
     global biom_id = MetXBase.extras(netX, "BIOM")
     global glc_id = MetXBase.extras(netX, "EX_GLC")
-    global netX = MetXOptim.box(netX, GLPK.Optimizer; protect_obj = true, verbose = true)
+    global netX = MetXOptim.fva_strip(netX, GLPK.Optimizer; protect_obj = true, verbose = true)
 
     global opm = MetXOptim.fba(netX, GLPK.Optimizer)
     @show MetXOptim.solution(opm, biom_id)

@@ -36,7 +36,7 @@ let
     for u in ubs
         lb!(net1, lim_id, 0)
         ub!(net1, lim_id, u)
-        global lep = box(net1, GLPK.Optimizer; verbose = false)
+        global lep = fva_strip(net1, GLPK.Optimizer; verbose = false)
         global epm0 = FluxEPModelT0(lep)
         config!(epm0; verbose = false)
         converge!(epm0)
@@ -53,7 +53,7 @@ let
     global av1s = []
     for u in ubs
         net2 = _fixxed_net(net1, lim_id, u)
-        global lep = box(net2, GLPK.Optimizer; verbose = false)
+        global lep = fva_strip(net2, GLPK.Optimizer; verbose = false)
         global epm0 = FluxEPModelT0(lep)
         config!(epm0; verbose = false)
         converge!(epm0)

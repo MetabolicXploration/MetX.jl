@@ -33,7 +33,7 @@ let
     global net0 = pull_net("ecoli_core")
     for l in lbs
         lb!(net0, "EX_glc__D_e", l)
-        net1 = box(net0, GLPK.Optimizer)
+        net1 = fva_strip(net0, GLPK.Optimizer)
         epm0 = FluxEPModelT0(net1)
         converge!(epm0)
         S2 = entropy(MultivariateNormal(epm0))
@@ -73,7 +73,7 @@ let
     for n in ns
         @show n
         net = pull_net("ecoli_core")
-        net1 = box(net, GLPK.Optimizer)
+        net1 = fva_strip(net, GLPK.Optimizer)
         # net = _build_box(n, n)
         epm0 = FluxEPModelT0(net)
         converge!(epm0)

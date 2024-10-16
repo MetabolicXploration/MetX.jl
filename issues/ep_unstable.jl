@@ -9,11 +9,11 @@ end
 
 ## ------------------------------------------------------------------
 # Either because the real ill-condition state of the metabolic network, 
-# because 'box' is not reducing accordingly the network, 
+# because 'fva_strip' is not reducing accordingly the network, 
 # or EP is accumulating erros, the Cov matrix fail the isposdef test beyong repare.
 let
     net0 = pull_net("iJR904")
-    net = box(net0, Gurobi.Optimizer, verbose = true)
+    net = fva_strip(net0, Gurobi.Optimizer, verbose = true)
 
     # EP
     epm = FluxEPModelT0(net)
@@ -37,7 +37,7 @@ let
         abs(net0.S[i]) < 1e-4 || continue
         net0.S[i] = 0.0
     end
-    net = box(net0, Gurobi.Optimizer, verbose = true)
+    net = fva_strip(net0, Gurobi.Optimizer, verbose = true)
 
     # EP
     epm = FluxEPModelT0(net)

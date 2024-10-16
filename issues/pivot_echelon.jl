@@ -13,7 +13,7 @@ end
 # which in a net extended matrix (Sb) is not a flux column.
 let
     global net0 = pull_net("ECC2")
-    global net = box(net0, Gurobi.Optimizer, verbose = true)
+    global net = fva_strip(net0, Gurobi.Optimizer, verbose = true)
 
     # EP
     global enet = EchelonLEPModel(net)

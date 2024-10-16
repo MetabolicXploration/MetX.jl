@@ -17,7 +17,7 @@ let
     # Net
     global model_id = "ecoli_core"
     global net0 = pull_net("ecoli_core")
-    global net = box(net0, Gurobi.Optimizer)
+    global net = fva_strip(net0, Gurobi.Optimizer)
 
     # EP
     global epm = FluxEPModelT0(net)
@@ -106,7 +106,7 @@ end
 # ## ------------------------------------------------------------------
 # let 
 #     global net0 = pull_net("ecoli_core")
-#     global net = box(net0, Gurobi.Optimizer)
+#     global net = fva_strip(net0, Gurobi.Optimizer)
 #     global enet = EchelonMetNet(net)
 #     global nbins = 200
 #     global fbox = BoxGrid(enet, nbins)

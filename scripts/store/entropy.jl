@@ -46,7 +46,7 @@ end
     global net0 = pull_net(model_id)
     global biom_id = extras(net0, "BIOM")
     global glc_id = extras(net0, "EX_GLC")
-    global net0 = box(net0, GLPK.Optimizer; 
+    global net0 = fva_strip(net0, GLPK.Optimizer; 
         protect_obj = true, verbose = true
     )
     todel = ["R_RBFSb" ,"R_PMDPHT" ,"R_GTPCII2" ,"R_DHPPDA2" ,"R_DB4PS" ,"R_RBFSa" ,"R_DPCOAK" ,"R_PPNCL2" ,"R_ASP1DC" ,"R_DPR" ,"R_PTPATi" ,"R_PANTS" ,"R_MOHMT" ,"R_PPCDC" ,"R_PNTK"]

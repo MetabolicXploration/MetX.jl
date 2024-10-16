@@ -16,7 +16,7 @@ let
     ## ---------------------------------------------
     model_id = "ecoli_core"
     global net0 = pull_net(model_id)
-    global lep = box(net0, Gurobi.Optimizer; nths = 2, verbose = true)
+    global lep = fva_strip(net0, Gurobi.Optimizer; nths = 2, verbose = true)
     biom_id = extras(lep, "BIOM") # R_BIOMASS_Ecoli
     glc_id = extras(lep, "EX_GLC") # R_EX_glc__D_e
     lac_id = "EX_lac__D_e"
@@ -67,7 +67,7 @@ let
     ## ---------------------------------------------
     model_id = "ecoli_core"
     global net0 = pull_net(model_id)
-    global lep = box(net0, Gurobi.Optimizer; nths = 2, verbose = true)
+    global lep = fva_strip(net0, Gurobi.Optimizer; nths = 2, verbose = true)
     biom_id = extras(lep, "BIOM") # R_BIOMASS_Ecoli
     glc_id = extras(lep, "EX_GLC") # R_EX_glc__D_e
     lac_id = "EX_lac__D_e"
@@ -106,8 +106,8 @@ let
     model_id = "iJR904"
     net0 = pull_net(model_id)
     lep0 = lepmodel(net0)
-    @time lep2 = box(lep0, TH_TESTS_LINSOLVER; nths = 1, verbose)
-    @time lep2 = box(lep0, TH_TESTS_LINSOLVER; nths = 2, verbose)
-    @time lep1 = box(lep0, TH_TESTS_LINSOLVER; nths = 3, verbose)
-    @time lep1 = box(lep0, TH_TESTS_LINSOLVER; nths = 4, verbose)
+    @time lep2 = fva_strip(lep0, TH_TESTS_LINSOLVER; nths = 1, verbose)
+    @time lep2 = fva_strip(lep0, TH_TESTS_LINSOLVER; nths = 2, verbose)
+    @time lep1 = fva_strip(lep0, TH_TESTS_LINSOLVER; nths = 3, verbose)
+    @time lep1 = fva_strip(lep0, TH_TESTS_LINSOLVER; nths = 4, verbose)
 end

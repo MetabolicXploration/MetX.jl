@@ -36,7 +36,7 @@ end
 let 
     global model_id = "toy_net4D"
     global net0 = pull_net(model_id)
-    global net = box(net0, Gurobi.Optimizer)
+    global net = fva_strip(net0, Gurobi.Optimizer)
     
     global epm = FluxEPModelT0(net)
     converge!(epm)

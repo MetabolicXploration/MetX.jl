@@ -17,7 +17,7 @@ let
     biom_id = extras(net0, "BIOM")
     glc_id = extras(net0, "EX_GLC")
     
-    global net = box(net0, GLPK.Optimizer)
+    global net = fva_strip(net0, GLPK.Optimizer)
     global epm = FluxEPModelT0(net)
     config!(epm, :verbose, true)
     
